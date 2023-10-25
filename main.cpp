@@ -41,6 +41,9 @@ int main(
                 alloc.dealloc(allocations.top());
                 allocations.pop();
                 break;
+
+            default:
+                cerr << "Warning:\tUnknown command returned by loader." << endl;
         }
         command = ld.getNextCommand();
     }
