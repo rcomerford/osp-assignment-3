@@ -159,8 +159,7 @@ void allocator::dealloc(
             allocated_chunks.end(),
             [&](allocation* a) { 
                 return a->space == chunk; 
-        }),
-        allocated_chunks.end()
+        })
     );
 }
 
@@ -188,6 +187,37 @@ void allocator::output()
             << "Used Size: "  << alloc_chunk->used_size
         << endl;
     }
+
+    cout << endl;
+
+    // calculate general data
+
+    size_t free_chunks_bytes = 0;
+    size_t occupied_chunks_bytes = 0;
+    size_t total_chunks_bytes = 0;
+    size_t allocated_used_bytes = 0;
+    size_t allocated_unused_bytes = 0;
+
+    for(auto &a : free_chunks)
+        free_chunks_bytes += a->used_size;
+
+    for(auto &a : allocated_chunks)
+        occupied_chunks_bytes += a->used_size;
+
+    for(auto &a : allocated_chunks)
+        allocated_used_bytes += a->used_size;
+
+    for(auto &a : allocated_chunks)
+        allocated_unused_bytes += (a->partition_size - a->used_size);
+
+    total_chunks_bytes = free_chunks_bytes + occupied_chunks_bytes;
+
+    cout << "----- PERFORMANCE METRICS -----" << endl;
+    cout << "Free Chunk Bytes:\t"       << free_chunks_bytes << endl;
+    cout << "Allocated Chunk Bytes:\t"  << occupied_chunks_bytes << endl;
+    cout << "Total Chunk Bytes:\t"      << total_chunks_bytes << endl;
+    cout << "Allocated Used Bytes:\t"   << allocated_used_bytes << endl;
+    cout << "Allocated Unused Bytes:\t" << allocated_unused_bytes << endl;
 
     cout << endl;
 }

@@ -2,13 +2,19 @@
 #include "loader.h"
 
 #include <stack>
+#include <chrono>
 
 using std::stack;
+using std::chrono::high_resolution_clock;
+using std::chrono::microseconds;
 
 int main(
     int argc, 
     char const *argv[]
 ){  
+    // start timing
+    auto start = high_resolution_clock::now();
+
     // input validation
     if(argc != 2)
     {
@@ -48,7 +54,16 @@ int main(
         command = ld.getNextCommand();
     }
 
-    // print and exit
+    // print details
     alloc.output();
+
+    // calculate runtime
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - start);
+
+    cout << "----- RUNTIME -----" << endl;
+    cout << "Total Time:\t" << duration.count() << "ms" << endl;
+    cout << endl;
+
     return EXIT_SUCCESS;
 }

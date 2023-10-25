@@ -15,7 +15,7 @@ using std::size_t;
 using std::cout;
 using std::cerr;
 using std::endl;
-
+using std::for_each;
 
 enum strategy 
 {
