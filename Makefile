@@ -1,9 +1,3 @@
-FIRSTFIT := firstfit
-BESTFIT := bestfit
-
-FIRSTFIT_DIR 	 := ./$(FIRSTFIT)_files
-BESTFIT_DIR := ./$(BESTFIT)_files
-
 FLAGS := -Wall -Werror -std=c++20
 
 .default: all
@@ -11,16 +5,13 @@ FLAGS := -Wall -Werror -std=c++20
 all: firstfit bestfit
 
 clean:
-	rm -rf $(FIRSTFIT) $(BESTFIT) $(FIRSTFIT_DIR)/*o $(BESTFIT_DIR)/*o
+	rm -rf firstfit bestfit *o
 
-firstfit: $(FIRSTFIT_DIR)/main.o
-	g++ $(FLAGS) $@ $^
+firstfit: main.o allocator.o
+	g++ $(FLAGS) -o $@ $^
 
-bestfit: $(BESTFIT_DIR)/main.o
-	g++ $(FLAGS) $@ $^
+bestfit: main.o allocator.o
+	g++ $(FLAGS) -o $@ $^
 
-$(FIRSTFIT_DIR)/%.o: %.cpp
-	g++ $(FLAGS) $^
-
-$(BESTFIT_DIR)/%.o: %.cpp
-	g++ $(FLAGS)c $^
+%.o: %.cpp
+	g++ $(FLAGS) -c $^

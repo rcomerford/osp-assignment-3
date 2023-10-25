@@ -1,3 +1,6 @@
+#ifndef ALLOCATION_H
+#define ALLOCATION_H
+
 #include <cstdlib>
 
 using std::size_t;
@@ -9,13 +12,20 @@ struct allocation
 { 
 
     /**
-     * Partition size, 32/64/128/256/512 bytes.
+     * Max partition size, 32/64/128/256/512 bytes.
     */
-    size_t size; 
+    size_t partition_size; 
+
+    /**
+     * Used size of the data.
+    */
+    size_t used_size; 
 
     /**
      * Heap starting location allocated by sbrk().
     */
-    void *space; 
+    void *space;
 
 };
+
+#endif // ALLOCATION_H
