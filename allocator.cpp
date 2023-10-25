@@ -1,10 +1,13 @@
 #include "allocator.h"
 
-allocator::allocator()
-{
+allocator::allocator(
+    const strategy STR,
+    const list<size_t> CS
+){
     allocated_chunks = list<allocation*>();
     free_chunks = list<allocation*>();
-    CHUNK_SIZES = {32, 64, 128, 256, 512 };
+    STRATEGY = STR;
+    CHUNK_SIZES = CS;
     INITIAL_BRK_ADDRESS = sbrk(0);
 }
 
@@ -30,26 +33,59 @@ void* allocator::alloc(
     // validate chunk size
     if(chunk_size > CHUNK_SIZES.back())
     {
-        cerr << "Fatal Error:\tChunk size is too large." << endl;
+        cerr << "Fatal Error:\tChunk size (" << chunk_size << ") is too large." << endl;
         exit(EXIT_FAILURE);
     }
 
-    // look for a chunk big enough that is already allocated
-    // TODO here using first-fit
-    list<allocation*>::iterator temp_iter = find_if(
-        free_chunks.begin(), 
-        free_chunks.end(), 
-        [&](allocation* a) { 
-            return a->partition_size >= chunk_size; 
+    list<allocation*>::iterator temp_iter;
+
+    // find chunk based on allocations strategy
+    if(STRATEGY == FIRST_FIT)
+    {
+        // look for a chunk big enough that is already allocated
+        temp_iter = find_if(
+            free_chunks.begin(), 
+            free_chunks.end(), 
+            [&](allocation* a) { 
+                return a->partition_size >= chunk_size; 
+            }
+        );
+    }
+    else // if(STRATEGY == BEST_FIT)
+    {
+        long unsigned int curr_distance = SIZE_MAX;
+        void* chunk_space = nullptr;
+
+        // look for a the chunk closest to the given size
+        for(auto &a : free_chunks)
+        {
+            if(
+                a->partition_size >= chunk_size &&
+                (a->partition_size - chunk_size) < curr_distance
+            ){
+                chunk_space = a->space;
+            }
         }
-    );
+
+        // look for a the chunk with the found address
+        // used here in order to get the iterator as opposed to just the index
+        temp_iter = find_if(
+            free_chunks.begin(), 
+            free_chunks.end(), 
+            [&](allocation* a) { 
+                return a->space == chunk_space; 
+            }
+        );
+    }
 
     void* alloc_ptr = nullptr;
 
     // if large enough chunk was found use it
     if(temp_iter != free_chunks.end())
     {
+        // change used size and return pointer value
         (*temp_iter)->used_size = chunk_size;
+        alloc_ptr = (*temp_iter)->space;
 
         // add to back of free chunks
         allocated_chunks.push_back(*temp_iter);
@@ -64,8 +100,6 @@ void* allocator::alloc(
             }),
             free_chunks.end()
         );
-
-        alloc_ptr = (*temp_iter)->space;
     }
     // otherwise expand heap and create new chunk
     else
@@ -98,6 +132,7 @@ void* allocator::alloc(
 void allocator::dealloc(
     void* chunk
 ){
+
     // find element matching address of chunk
     list<allocation*>::iterator temp_iter = find_if(
         allocated_chunks.begin(), 
@@ -111,7 +146,6 @@ void allocator::dealloc(
     if(temp_iter == allocated_chunks.end())
     {
         cerr << "Fatal Error:\tChunk \"" << (void*)chunk << "\" not found." << endl;
-        output();
         exit(EXIT_FAILURE);
     }
 
@@ -132,6 +166,20 @@ void allocator::dealloc(
 
 void allocator::output()
 {
+    cout << endl;
+
+    // print free chunks
+    cout << "-----" << " FREE CHUNK LIST " << "-----" << endl;
+    for(auto &free_chunk : free_chunks)
+    {
+        cout 
+            << "Address: "    << (void*)free_chunk->space   << " | "
+            << "Total Size: " << free_chunk->partition_size
+        << endl;
+    }
+
+    cout << endl;
+
     // print allocated chunks
     cout << "-----" << " ALLOCATED CHUNK LIST " << "-----" << endl;
     for(auto &alloc_chunk : allocated_chunks)
@@ -144,14 +192,4 @@ void allocator::output()
     }
 
     cout << endl;
-
-    // print free chunks
-    cout << "-----" << " FREE CHUNK LIST " << "-----" << endl;
-    for(auto &free_chunk : free_chunks)
-    {
-        cout 
-            << "Address: "    << (void*)free_chunk->space   << " | "
-            << "Total Size: " << free_chunk->partition_size
-        << endl;
-    }
 }

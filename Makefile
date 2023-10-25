@@ -7,10 +7,10 @@ all: firstfit bestfit
 clean:
 	rm -rf firstfit bestfit *o
 
-firstfit: main.o allocator.o
+firstfit: main.o loader.o allocator.o
 	g++ $(FLAGS) -o $@ $^
 
-bestfit: main.o allocator.o
+bestfit: main.o loader.o allocator.o
 	g++ $(FLAGS) -o $@ $^
 
 %.o: %.cpp

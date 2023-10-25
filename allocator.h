@@ -7,6 +7,8 @@
 #include <new>
 #include <iostream>
 #include <unistd.h>
+#include <cstring>
+#include <ranges>
 
 using std::list;
 using std::size_t;
@@ -14,19 +16,31 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+
+enum strategy 
+{
+    FIRST_FIT = 0,
+    BEST_FIT = 1
+};
+
 class allocator
 {
     private:
 
         /**
-         * Initial address of the heap frontier. 
+         * Allocation strategy to use.
         */
-        void* INITIAL_BRK_ADDRESS;
+        strategy STRATEGY;
 
         /**
          * List of valid chunk sizes.
         */
         list<size_t> CHUNK_SIZES;
+
+        /**
+         * Initial address of the heap frontier. 
+        */
+        void* INITIAL_BRK_ADDRESS;
 
         /**
          * Linked list of allocated memory blocks.
@@ -43,7 +57,10 @@ class allocator
         /**
          * Con/destructor.
         */
-        allocator();
+        allocator(
+            const strategy STR,
+            const list<size_t> CS
+        );
         ~allocator();
 
         /**
