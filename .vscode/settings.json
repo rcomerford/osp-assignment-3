@@ -47,5 +47,9 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "sstream": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "alloc",
+        "dealloc"
+    ]
 }

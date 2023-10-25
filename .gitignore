@@ -32,3 +32,6 @@
 *.app
 bestfit
 firstfit
+
+# VSCode files
+.vscode/*

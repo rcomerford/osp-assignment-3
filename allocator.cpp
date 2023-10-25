@@ -168,8 +168,7 @@ void allocator::output()
 {
     cout << endl;
 
-    // print free chunks
-    cout << "-----" << " FREE CHUNK LIST " << "-----" << endl;
+    cout << "----- FREE CHUNK LIST -----" << endl;
     for(auto &free_chunk : free_chunks)
     {
         cout 
@@ -180,8 +179,7 @@ void allocator::output()
 
     cout << endl;
 
-    // print allocated chunks
-    cout << "-----" << " ALLOCATED CHUNK LIST " << "-----" << endl;
+    cout << "----- ALLOCATED CHUNK LIST -----" << endl;
     for(auto &alloc_chunk : allocated_chunks)
     {
         cout 

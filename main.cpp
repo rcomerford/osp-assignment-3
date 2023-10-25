@@ -41,9 +41,6 @@ int main(
                 alloc.dealloc(allocations.top());
                 allocations.pop();
                 break;
-
-            default:
-                cerr << "Fatal Error:\tUnknown command." << endl;
         }
         command = ld.getNextCommand();
     }
