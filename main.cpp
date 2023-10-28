@@ -35,21 +35,34 @@ int main(
     pair<command, size_t> command = ld.getNextCommand();
     while(command.first != EXIT)
     {
-        switch(command.first) 
+        if(command.first == ALLOC)
         {
-            case ALLOC:
-                // allocate new memory, adding address to the stack
-                allocations.push(alloc.alloc(command.second));
-                break;
-
-            case DEALLOC:
-                // deallocate last address popped from the stack
-                alloc.dealloc(allocations.top());
-                allocations.pop();
-                break;
-
-            default:
-                cerr << "Warning:\tUnknown command returned by loader." << endl;
+            // allocate new memory, adding address to the stack
+            void* new_pointer = alloc.alloc(command.second);
+            allocations.push(new_pointer);
+        }
+        else if(command.first == DEALLOC)
+        {
+            // validate allocation on stack
+            void* last_pointer;
+            if(allocations.size() == 0)
+            {
+                cerr << "Warning:\tMore allocations than deallocations in file." << endl;
+                last_pointer = nullptr;
+            } 
+            else
+            {
+                // if not empty, pop
+                last_pointer = allocations.top();
+            }
+            
+            // deallocate last address popped from the stack
+            alloc.dealloc(last_pointer);
+            allocations.pop();
+        }
+        else
+        {
+            cerr << "Warning:\tUnknown command returned by loader." << endl;  
         }
         command = ld.getNextCommand();
     }
@@ -62,7 +75,7 @@ int main(
     auto duration = duration_cast<microseconds>(end - start);
 
     cout << "----- RUNTIME -----" << endl;
-    cout << "Total Time:\t" << duration.count() << "ms" << endl;
+    cout << "Total Time:\t" << duration.count() << "μs" << endl;
     cout << endl;
 
     return EXIT_SUCCESS;

@@ -38,10 +38,20 @@ Built by Ryan Comerford (s3945787)
 - Cause: File given contained line which could not be parsed.
 - Message: `Fatal Error: Unable to process input at line "[line]".`
 
+#### Allocator: Unable to Get Heap Frontier
+
+- Cause: Unknown error in heap memory system. Try restarting program / operating system.
+- Message: `Fatal Error: Unable to get initial heap frontier value.`
+
 #### Alloc: Incorrect Chunk Size
 
 - Cause: Attempted to allocate memory in a chunk size larger than 512.
 - Message: `Fatal Error: Chunk size ([chunk_size]) is too large.`
+
+#### Alloc: Unable to Expand Heap Frontier
+
+- Cause: Unknown error in heap memory system. Try restarting program / operating system.
+- Message: `Fatal Error: Unable to expand allocation of size [chunk_size].`
 
 #### Dealloc: Unallocated Chunk
 

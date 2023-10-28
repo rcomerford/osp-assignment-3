@@ -47,7 +47,12 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "sstream": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "optional": "cpp",
+        "ratio": "cpp",
+        "ranges": "cpp"
     },
     "cSpell.words": [
         "alloc",

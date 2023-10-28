@@ -33,5 +33,9 @@
 bestfit
 firstfit
 
-# VSCode files
-.vscode/*
+# Data
+data/*
+
+# Test Results
+bestfit.txt
+firstfit.txt

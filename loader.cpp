@@ -54,7 +54,7 @@ pair<command, size_t> loader::getNextCommand()
     // get next line
     string line;
     if(getline(data_file, line))
-    { 
+    {
         // split string by spaces
         vector<string> string_split = splitString(line, LINE_DELIM);
 

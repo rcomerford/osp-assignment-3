@@ -8,7 +8,15 @@ allocator::allocator(
     free_chunks = list<allocation*>();
     STRATEGY = STR;
     CHUNK_SIZES = CS;
+
+    // get current location of the  heap frontier and error check
     INITIAL_BRK_ADDRESS = sbrk(0);
+    
+    if(INITIAL_BRK_ADDRESS == (void *)-1)
+    {
+        cerr << "Fatal Error:\tUnable to get initial heap frontier value." << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 allocator::~allocator()
@@ -116,11 +124,20 @@ void* allocator::alloc(
             }
         }
 
+        // expand heap frontier
+        void* new_partition_space = sbrk(new_partition_size);
+
+        if(new_partition_space == (void *)-1)
+        {
+            cerr << "Fatal Error:\tUnable to expand allocation of size " << new_partition_size << "." << endl;
+            exit(EXIT_FAILURE);
+        }
+
         // create new allocation object
         allocation* new_alloc = new allocation();
         new_alloc->partition_size = new_partition_size;
         new_alloc->used_size = chunk_size;
-        new_alloc->space = sbrk(new_partition_size);
+        new_alloc->space = new_partition_space;
 
         allocated_chunks.push_back(new_alloc);
         alloc_ptr = new_alloc->space;
@@ -132,7 +149,6 @@ void* allocator::alloc(
 void allocator::dealloc(
     void* chunk
 ){
-
     // find element matching address of chunk
     list<allocation*>::iterator temp_iter = find_if(
         allocated_chunks.begin(), 
@@ -165,8 +181,6 @@ void allocator::dealloc(
 
 void allocator::output()
 {
-    cout << endl;
-
     cout << "----- FREE CHUNK LIST -----" << endl;
     for(auto &free_chunk : free_chunks)
     {
@@ -190,7 +204,7 @@ void allocator::output()
 
     cout << endl;
 
-    // calculate general data
+    // calculate performance metrics
 
     size_t free_chunks_bytes = 0;
     size_t occupied_chunks_bytes = 0;
@@ -199,10 +213,10 @@ void allocator::output()
     size_t allocated_unused_bytes = 0;
 
     for(auto &a : free_chunks)
-        free_chunks_bytes += a->used_size;
+        free_chunks_bytes += a->partition_size;
 
     for(auto &a : allocated_chunks)
-        occupied_chunks_bytes += a->used_size;
+        occupied_chunks_bytes += a->partition_size;
 
     for(auto &a : allocated_chunks)
         allocated_used_bytes += a->used_size;
